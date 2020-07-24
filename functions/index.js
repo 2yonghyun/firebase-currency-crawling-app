@@ -17,7 +17,7 @@ exports.getExchangeList = functions
     });
     const page = await browser.newPage();
     await page.goto('https://finance.naver.com/marketindex/', {waitUntil: 'networkidle2'});
-    const exchangeList = await page.evaluate(() => {
+    var exchangeList = await page.evaluate(() => {
       const infoNodes = document.querySelector("#exchangeList > li.on > div").children;
       const usdNodes = document.querySelector("#exchangeList > li.on > a.head.usd > div").children;
       const jpyNodes = document.querySelector("#exchangeList > li > a.head.jpy > div").children;
@@ -53,7 +53,7 @@ exports.getExchangeList = functions
       return scrappedData;
     });
 
-    const snapshot = await admin.database().ref('/currencies').push({exchangeList: exchangeList});
+    const snapshot = await admin.database().ref('currencies/' + Date.now()).set(exchangeList);
 
     await browser.close();
 
